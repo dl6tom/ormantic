@@ -375,9 +375,6 @@ class Model(pydantic.BaseModel, metaclass=MetaModel):
         return cls(**item)
 
     def table_dict(self) -> typing.Dict[str, typing.Any]:
-        get_key = self._get_key_factory(False)
-        get_key = partial(get_key, self.__fields__)
-
         def _get_td_value(v: typing.Any) -> typing.Any:
             if isinstance(v, Model):
                 return v.pk
@@ -392,8 +389,4 @@ class Model(pydantic.BaseModel, metaclass=MetaModel):
             else:
                 return v
 
-        def _td_iter():
-            for k, v in self.__dict__.items():
-                yield k, _get_td_value(v)
-
-        return {get_key(k): v for k, v in _td_iter()}
+        return {k: _get_td_value(v) for k, v in self.__dict__.items()}
