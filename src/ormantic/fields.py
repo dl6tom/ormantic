@@ -270,13 +270,14 @@ def JSON(
     return type("JSON", (Json, ColumnFactory), namespace)
 
 
-def ForeignKey(to, *, allow_null: bool = False) -> Type[object]:
+def ForeignKey(to, *, unique: bool = False, allow_null: bool = False) -> Type[object]:
     fk_string = to.Mapping.table_name + "." + to.Mapping.pk_name
     to_field = to.__fields__[to.Mapping.pk_name]
     namespace = dict(
         to=to,
         allow_null=allow_null,
         constraints=[sqlalchemy.schema.ForeignKey(fk_string)],
+        unique=unique,
         column_type=to_field.type_.column_type,
     )
 
